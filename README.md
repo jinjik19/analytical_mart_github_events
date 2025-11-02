@@ -37,6 +37,25 @@ Build a fully automated data pipeline for collecting and analyzing open-source c
 
 ## ▶️ Getting Started
 
+### 🧩 Local Development
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/jinjik19/analytical_mart_github_events.git
+   cd analytical_mart_github_events
+   ```
+
+2. Create environment file:
+   ```bash
+   cp .env.example .env
+   export AIRFLOW_UID=$(id -u)
+   ```
+
+3. Run the stack:
+   ```bash
+   docker compose -f ./infra/docker_compose/docker-compose.dev.yml -p github_events_mart up --build -d
+   ```
+
 ---
 
 ## 📊 Data Model

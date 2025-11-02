@@ -1,0 +1,86 @@
+# Generated .gitignore file for: Python, VSCode, macOS, Windows, Linux, Make, Docker, Kubernetes, GitHub Actions, Terraform
+# Created with FOSSA's DevOps Tools
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+build/
+develop-eggs/
+dist/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+logs/
+*.log
+pip-log.txt
+pip-delete-this-arg.txt
+.ipynb_checkpoints
+.mypy_cache/
+.ruff_cache/
+
+# VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Airflow
+# Airflow-specific logs and data
+logs/
+config/
+dags/data/
+dags/temp/
+*.airflowignore # If you're using .airflowignore for DAG filtering
+# Example: If you have a specific folder for temporary files within dags
+dags/temp_files/
+
+# Docker
+docker-compose.override.yml
+Dockerfile.override
+.dockerignore
+
+# dbt
+# dbt-generated artifacts
+target/
+dbt_packages/
+logs/
+.dbtignore # If you're using .dbtignore for dbt-specific file ignoring
+# Example: If you have a specific folder for temporary files within dbt
+data_temp/
+
+# Common
+.DS_Store
+Thumbs.db
+*.log
+*.bak
+*.tmp
+*.swp
+*~
+
+# IDE and editor generated files
+.idea/
+*.sublime-*
+
+# Local environment files
+.env
+.env.local
+.env.*.local

@@ -5,7 +5,10 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12.3"
 dependencies = [
+    "boto3==1.40.64",
+    "pyspark==4.0.1",
     "requests==2.32.5",
+    "tenacity>=9.1.2",
 ]
 
 [dependency-groups]

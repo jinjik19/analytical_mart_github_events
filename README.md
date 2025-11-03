@@ -19,7 +19,6 @@ Build a fully automated data pipeline for collecting and analyzing open-source c
 * [![Apache Spark](https://img.shields.io/badge/Apache%20Spark-E87D0E?style=for-the-badge&logo=apachespark&logoColor=white)](https://spark.apache.org/)
 * [![Greenplum](https://img.shields.io/badge/Greenplum-006A44?style=for-the-badge&logo=greenplum&logoColor=white)](https://greenplum.org/)
 * [![Airflow](https://img.shields.io/badge/Apache%20Airflow-017CEE?style=for-the-badge&logo=apacheairflow&logoColor=white)](https://airflow.apache.org/)
-* [![Airbyte](https://img.shields.io/badge/Airbyte-615EFF?style=for-the-badge&logo=airbyte&logoColor=white)](https://airbyte.com/)
 * [![Minio](https://img.shields.io/badge/Minio-C82834?style=for-the-badge&logo=minio&logoColor=white)](https://min.io/)
 * [![dbt](https://img.shields.io/badge/dbt-FF694B?style=for-the-badge&logo=dbt&logoColor=white)](https://www.getdbt.com/)
 * [![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
@@ -60,12 +59,11 @@ Build a fully automated data pipeline for collecting and analyzing open-source c
 2. Create environment file:
    ```bash
    cp .env.example .env
-   export AIRFLOW_UID=$(id -u)
    ```
 
 3. Run the stack:
    ```bash
-   docker compose -f ./infra/docker_compose/docker-compose.dev.yml -p github_events_mart up --build -d
+   ./start-all.sh
    ```
 
 ---
@@ -73,3 +71,10 @@ Build a fully automated data pipeline for collecting and analyzing open-source c
 ## 📊 Data Model
 
 ---
+
+## Shutting Down
+
+If you can stop project, use command:
+```bash
+./stop-all.sh
+```

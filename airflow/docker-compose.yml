@@ -53,8 +53,8 @@ x-airflow-common:
   # and uncomment the "build" line below, Then run `docker-compose build` to build the images.
   # image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:3.1.0}
   build:
-    context: .
-    dockerfile: ../../airflow/Dockerfile
+    context: ../
+    dockerfile: airflow/Dockerfile
   environment:
     &airflow-common-env
     AIRFLOW__CORE__EXECUTOR: LocalExecutor
@@ -64,7 +64,7 @@ x-airflow-common:
     AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'false'
     AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
     AIRFLOW__CORE__EXECUTION_API_SERVER_URL: 'http://airflow-apiserver:8080/execution/'
-    PYTHONPATH: /opt/airflow/dags:/opt/airflow/src
+    PYTHONPATH: /opt/airflow:/opt/airflow/src
     DBT_PROFILES_DIR: /opt/airflow/.dbt
     # yamllint disable rule:line-length
     # Use simple http server on scheduler for health checks
@@ -76,21 +76,25 @@ x-airflow-common:
     _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:-}
     # The following line can be used to set a custom config file, stored in the local config folder
     AIRFLOW_CONFIG: '/opt/airflow/config/airflow.cfg'
-    AIRFLOW_VAR_CLICKHOUSE_URL: clickhouse://clickhouse:8123/superstore_db
+    AIRFLOW_VAR_ACCESS_KEY: ${MINIO_ROOT_USER}
+    AIRFLOW_VAR_SECRET_KEY: ${MINIO_ROOT_PASSWORD}
+    AIRFLOW_VAR_MINIO_ENDPOINT: ${MINIO_HOST}
+    AIRFLOW_VAR_BUCKET_NAME: ${BUCKET_NAME}
+    AIRFLOW_CONN_GITHUB_ARCHIVE_CONN: "http://data.gharchive.org"
   volumes:
     - ${AIRFLOW_PROJ_DIR:-.}/dags:/opt/airflow/dags
     - ${AIRFLOW_PROJ_DIR:-.}/logs:/opt/airflow/logs
     - ${AIRFLOW_PROJ_DIR:-.}/config:/opt/airflow/config
     - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins
     - ${AIRFLOW_PROJ_DIR:-.}/data:/opt/airflow/data
-    - ${AIRFLOW_PROJ_DIR:-.}/src:/opt/airflow/src
-    - ${AIRFLOW_PROJ_DIR:-.}/superstore_dbt:/opt/airflow/superstore_dbt
-    - ${AIRFLOW_PROJ_DIR:-.}/superstore_dbt/profiles.yml:/opt/airflow/.dbt/profiles.yml
+    - ../src:/opt/airflow/src
   user: "${AIRFLOW_UID:-50000}:0"
   depends_on:
     &airflow-common-depends-on
     postgres:
       condition: service_healthy
+  networks:
+    - analytical_mart_network
 
 services:
   postgres:
@@ -107,6 +111,8 @@ services:
       retries: 5
       start_period: 5s
     restart: always
+    networks:
+      - analytical_mart_network
 
   airflow-apiserver:
     <<: *airflow-common
@@ -262,39 +268,10 @@ services:
     depends_on:
       <<: *airflow-common-depends-on
 
-  # metabase:
-  #   image: metabase/metabase:v0.56.8.x
-  #   container_name: superstore_metabase
-  #   depends_on:
-  #     clickhouse:
-  #       condition: service_healthy
-  #   ports:
-  #     - "3000:3000"
-  #   environment:
-  #     MB_DB_TYPE: h2
-  #     MB_DB_FILE: /metabase-data/metabase.db
-  #     MB_PLUGINS_DIR: /plugins
-  #   volumes:
-  #     - ./metabase_data:/metabase-data
-  #     - ./plugins:/plugins
-
-  # dbt-docs:
-  #   <<: *airflow-common
-  #   container_name: dbt_docs_server
-  #   working_dir: /opt/airflow/superstore_dbt
-  #   command:
-  #     - "bash"
-  #     - "-c"
-  #     - "dbt docs generate && dbt docs serve --host 0.0.0.0 --port 8001"
-  #   ports:
-  #     - "8001:8001"
-  #   depends_on:
-  #     clickhouse:
-  #       condition: service_healthy
-  #     airflow-init:
-  #       condition: service_completed_successfully
-  #   restart: always
-
 
 volumes:
   postgres-db-volume:
+
+networks:
+  analytical_mart_network:
+    external: true

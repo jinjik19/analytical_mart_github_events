@@ -4,9 +4,67 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12.3"
-dependencies = []
+dependencies = [
+    "apache-airflow-providers-http==5.4.0",
+    "boto3==1.40.64",
+    "pyspark==4.0.1",
+    "requests==2.32.5",
+    "tenacity>=9.1.2",
+]
 
 [dependency-groups]
 dev = [
+    "apache-airflow==3.1.1",
+    "boto3-stubs==1.40.64",
     "jupyter>=1.1.1",
+    "mypy==1.18.2",
+    "pytest==8.4.2",
+    "pytest-mock==3.15.1",
+    "ruff==0.14.3",
 ]
+
+[tool.pytest.ini_options]
+pythonpath = "."
+testpaths = "tests/"
+
+[tool.ruff]
+exclude = [
+    ".venv",
+    "*.ipynb",
+    "tests",
+]
+line-length = 88
+indent-width = 4
+target-version = "py312"
+
+[tool.ruff.lint]
+extend-select = [
+    "ANN001",  # Missing type annotation for function argument.
+    "ANN201",  # Missing return type annotation for public function.
+    "ANN202", # Missing return type annotation for private function.
+    "ANN205",  # Missing return type annotation for staticmethod.
+    "ANN206",  # Missing return type annotation for classmethod.
+    "T201", # print found
+    "T203", # pprint found
+    "C901", # complex-structure
+    "I",  # isort
+]
+extend-ignore = [
+    "D203",  # 1 blank line required before class docstring.
+    "D213",  # Multi-line docstring summary should start at the second line.
+]
+
+[tool.ruff.lint.isort]
+lines-after-imports = 2
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["E402"]
+"**/{tests,docs,tools}/*" = ["E402"]
+
+[tool.mypy]
+python_version = "3.12"
+ignore_missing_imports = true
+exclude = '(airflow/dags|airflow/plugins|tests)'

@@ -19,7 +19,6 @@ Build a fully automated data pipeline for collecting and analyzing open-source c
 * [![Apache Spark](https://img.shields.io/badge/Apache%20Spark-E87D0E?style=for-the-badge&logo=apachespark&logoColor=white)](https://spark.apache.org/)
 * [![Greenplum](https://img.shields.io/badge/Greenplum-006A44?style=for-the-badge&logo=greenplum&logoColor=white)](https://greenplum.org/)
 * [![Airflow](https://img.shields.io/badge/Apache%20Airflow-017CEE?style=for-the-badge&logo=apacheairflow&logoColor=white)](https://airflow.apache.org/)
-* [![Airbyte](https://img.shields.io/badge/Airbyte-615EFF?style=for-the-badge&logo=airbyte&logoColor=white)](https://airbyte.com/)
 * [![Minio](https://img.shields.io/badge/Minio-C82834?style=for-the-badge&logo=minio&logoColor=white)](https://min.io/)
 * [![dbt](https://img.shields.io/badge/dbt-FF694B?style=for-the-badge&logo=dbt&logoColor=white)](https://www.getdbt.com/)
 * [![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
@@ -36,6 +35,9 @@ Build a fully automated data pipeline for collecting and analyzing open-source c
 ## 🔧 Implementation Details
 
 ### Data Source
+- **Primary Source**: GitHub API.
+- **Extraction Method**: A custom Python script scheduled by Airflow. It downloads the hourly .json.gz files using the requests library.
+- **Raw Format**: The downloaded .json.gz files are loaded unmodified into the raw/ layer of the MinIO Data Lake. This immutable raw data serves as the "single source of truth" and allows for full reprocessing of the pipeline at any time.
 
 ---
 
@@ -48,6 +50,44 @@ Build a fully automated data pipeline for collecting and analyzing open-source c
 ---
 
 ## ▶️ Getting Started
+
+### 🧩 Local Development
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/jinjik19/analytical_mart_github_events.git
+   cd analytical_mart_github_events
+   ```
+
+2. Create environment file:
+   ```bash
+   cp .env.example .env
+   ```
+
+3. Run the stack:
+   ```bash
+   make start
+   ```
+
+   or
+
+   ```bash
+   ./start-all.sh
+   ```
+---
+
+### Shutting Down
+
+If you can stop project, use command:
+```bash
+make stop
+```
+
+or
+
+```bash
+./stop-all.sh
+```
 
 ---
 

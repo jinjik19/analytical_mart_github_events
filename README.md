@@ -35,6 +35,9 @@ Build a fully automated data pipeline for collecting and analyzing open-source c
 ## 🔧 Implementation Details
 
 ### Data Source
+- **Primary Source**: GitHub API.
+- **Extraction Method**: A custom Python script scheduled by Airflow. It downloads the hourly .json.gz files using the requests library.
+- **Raw Format**: The downloaded .json.gz files are loaded unmodified into the raw/ layer of the MinIO Data Lake. This immutable raw data serves as the "single source of truth" and allows for full reprocessing of the pipeline at any time.
 
 ---
 
@@ -71,14 +74,9 @@ Build a fully automated data pipeline for collecting and analyzing open-source c
    ```bash
    ./start-all.sh
    ```
-
 ---
 
-## 📊 Data Model
-
----
-
-## Shutting Down
+### Shutting Down
 
 If you can stop project, use command:
 ```bash
@@ -90,3 +88,9 @@ or
 ```bash
 ./stop-all.sh
 ```
+
+---
+
+## 📊 Data Model
+
+---

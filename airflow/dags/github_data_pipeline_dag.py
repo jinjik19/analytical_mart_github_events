@@ -25,7 +25,9 @@ bucket_name = Variable.get("BUCKET_NAME")
 )
 def github_data_pipeline_dag() -> None:
     @task.short_circuit
-    def check_business_hours(data_interval_start: pendulum.DateTime | None = None) -> bool:
+    def check_business_hours(data_interval_start: pendulum.DateTime) -> bool:
+
+        
         hour = data_interval_start.hour
         if 0 <= hour < 10:
             logger.warning(f"Skipping run: file for hour {hour} is not generated.")
@@ -45,7 +47,7 @@ def github_data_pipeline_dag() -> None:
     )
 
     @task
-    def extract_and_load_to_raw(data_interval_start: pendulum.DateTime | None = None):
+    def extract_and_load_to_raw(data_interval_start: pendulum.DateTime) -> str:
         file_name = data_interval_start.strftime("%Y-%m-%d-%H") + ".json.gz"
         year = data_interval_start.year
         month = data_interval_start.month
@@ -55,17 +57,17 @@ def github_data_pipeline_dag() -> None:
         if 0 <= hour < 10:
             raise AirflowSkipException("Skipping early hour data extraction")
 
-        client = GArchiveClient()
+        garchive_client = GArchiveClient()
 
         try:
-            raw_data_stream = client.download_archive(file_name)
+            raw_data_stream = garchive_client.download_archive(file_name)
         except RetryError as e:
             logger.error(f"Exceeded maximum retries to download {file_name}: {e}")
             raise e
 
-        client = MinioClient(access_key, secret_key, endpoint_url, bucket_name)
+        minio_client = MinioClient(access_key, secret_key, endpoint_url, bucket_name)
         object_key = f"raw/{year}/{month}/{day}/{file_name}"
-        client.upload_file(raw_data_stream, object_key)
+        minio_client.upload_file(raw_data_stream, object_key)
 
         return object_key
 
@@ -74,11 +76,11 @@ def github_data_pipeline_dag() -> None:
         logger.info(f"Transforming raw data from {object_key} to staging area")
 
     @task
-    def run_dbt_transformations():
+    def run_dbt_transformations() -> None:
         logger.info("Running dbt transformations")
 
     @task
-    def verify_marts():
+    def verify_marts() -> None:
         logger.info("Verifying data marts")
 
     check_task = check_business_hours()

@@ -15,15 +15,23 @@ dependencies = [
 [dependency-groups]
 dev = [
     "apache-airflow==3.1.1",
+    "boto3-stubs==1.40.64",
     "jupyter>=1.1.1",
     "mypy==1.18.2",
+    "pytest==8.4.2",
+    "pytest-mock==3.15.1",
     "ruff==0.14.3",
 ]
+
+[tool.pytest.ini_options]
+pythonpath = "."
+testpaths = "tests/"
 
 [tool.ruff]
 exclude = [
     ".venv",
-    "*.ipynb"
+    "*.ipynb",
+    "tests",
 ]
 line-length = 88
 indent-width = 4
@@ -59,6 +67,4 @@ quote-style = "double"
 [tool.mypy]
 python_version = "3.12"
 ignore_missing_imports = true
-
-[[tool.mypy.overrides]]
-ignore_errors = true
+exclude = '(airflow/dags|airflow/plugins|tests)'

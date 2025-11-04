@@ -63,6 +63,12 @@ Build a fully automated data pipeline for collecting and analyzing open-source c
 
 3. Run the stack:
    ```bash
+   make start
+   ```
+
+   or
+
+   ```bash
    ./start-all.sh
    ```
 
@@ -75,6 +81,12 @@ Build a fully automated data pipeline for collecting and analyzing open-source c
 ## Shutting Down
 
 If you can stop project, use command:
+```bash
+make stop
+```
+
+or
+
 ```bash
 ./stop-all.sh
 ```

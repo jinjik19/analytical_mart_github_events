@@ -64,7 +64,7 @@ x-airflow-common:
     AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'false'
     AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
     AIRFLOW__CORE__EXECUTION_API_SERVER_URL: 'http://airflow-apiserver:8080/execution/'
-    PYTHONPATH: /opt/airflow/dags:/opt/airflow/src
+    PYTHONPATH: /opt/airflow:/opt/airflow/src
     DBT_PROFILES_DIR: /opt/airflow/.dbt
     # yamllint disable rule:line-length
     # Use simple http server on scheduler for health checks
@@ -76,7 +76,11 @@ x-airflow-common:
     _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:-}
     # The following line can be used to set a custom config file, stored in the local config folder
     AIRFLOW_CONFIG: '/opt/airflow/config/airflow.cfg'
-    AIRFLOW_VAR_CLICKHOUSE_URL: clickhouse://clickhouse:8123/superstore_db
+    AIRFLOW_VAR_ACCESS_KEY: ${MINIO_ROOT_USER}
+    AIRFLOW_VAR_SECRET_KEY: ${MINIO_ROOT_PASSWORD}
+    AIRFLOW_VAR_MINIO_ENDPOINT: ${MINIO_HOST}
+    AIRFLOW_VAR_BUCKET_NAME: ${BUCKET_NAME}
+    AIRFLOW_CONN_GITHUB_ARCHIVE_CONN: "http://data.gharchive.org"
   volumes:
     - ${AIRFLOW_PROJ_DIR:-.}/dags:/opt/airflow/dags
     - ${AIRFLOW_PROJ_DIR:-.}/logs:/opt/airflow/logs
@@ -84,8 +88,6 @@ x-airflow-common:
     - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins
     - ${AIRFLOW_PROJ_DIR:-.}/data:/opt/airflow/data
     - ${AIRFLOW_PROJ_DIR:-.}/src:/opt/airflow/src
-    - ${AIRFLOW_PROJ_DIR:-.}/superstore_dbt:/opt/airflow/superstore_dbt
-    - ${AIRFLOW_PROJ_DIR:-.}/superstore_dbt/profiles.yml:/opt/airflow/.dbt/profiles.yml
   user: "${AIRFLOW_UID:-50000}:0"
   depends_on:
     &airflow-common-depends-on
@@ -109,6 +111,8 @@ services:
       retries: 5
       start_period: 5s
     restart: always
+    networks:
+      - analytical_mart_network
 
   airflow-apiserver:
     <<: *airflow-common

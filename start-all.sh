@@ -8,9 +8,9 @@ docker network create analytical_mart_network || true
 
 echo "Starting all services..."
 echo "1. Run 'Docker Compose' for DWH stack..."
-docker-compose -f dwh_stack/docker-compose.yml --project-name github_events_platform up --build -d
+docker-compose --env-file .env -f dwh_stack/docker-compose.yml --project-name github_events_platform up --build -d
 
 echo "2. Run 'Docker Compose' for Airflow..."
-docker-compose -f airflow/docker-compose.yml --project-name github_events_platform up --build -d
+docker-compose --env-file .env -f airflow/docker-compose.yml --project-name github_events_platform up --build -d
 
 echo "All services are starting up."
